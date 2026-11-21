@@ -1,0 +1,14 @@
+
+# Arquivos gerados pelo Maven
+target/
+
+# Arquivos locais do IntelliJ
+.idea/
+*.iml
+
+# Arquivos compilados
+*.class
+
+# Arquivos do sistema operacional
+.DS_Store
+Thumbs.db
