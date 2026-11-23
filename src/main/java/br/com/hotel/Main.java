@@ -1,93 +1,65 @@
 
 package br.com.hotel;
 
-import br.com.hotel.factory.CriadorQuarto;
-import br.com.hotel.factory.CriadorQuartoLuxo;
-import br.com.hotel.factory.CriadorQuartoStandard;
-import br.com.hotel.factory.CriadorSuitePresidencial;
+import br.com.hotel.model.Hospede;
 import br.com.hotel.model.Quarto;
-import br.com.hotel.service.CalculadoraReserva;
-import br.com.hotel.strategy.DescontoNormal;
-import br.com.hotel.strategy.DescontoVIP;
-import br.com.hotel.strategy.DescontoFidelidade;
+import br.com.hotel.model.Reserva;
+
+import java.time.LocalDate;
 
 /**
  * Classe principal do Sistema de Gerenciamento de Hotel.
  *
- * Demonstra a utilização conjunta dos padrões:
- *
- * Factory Method: criação de diferentes tipos de quartos.
- * Strategy: aplicação de diferentes políticas de desconto.
+ * Demonstra o padrão Builder na construção de reservas.
+ * O Decorator será integrado na próxima etapa.
  */
 public class Main {
 
     public static void main(String[] args) {
 
         System.out.println("====================================");
-        System.out.println("   SISTEMA DE GERENCIAMENTO DE HOTEL");
+        System.out.println("  SISTEMA DE GERENCIAMENTO DE HOTEL ");
         System.out.println("====================================");
 
-        // ===== FACTORY METHOD =====
-
-        System.out.println("\n===== TIPOS DE QUARTOS =====");
-
-        CriadorQuarto criadorStandard = new CriadorQuartoStandard();
-        CriadorQuarto criadorLuxo = new CriadorQuartoLuxo();
-        CriadorQuarto criadorPresidencial = new CriadorSuitePresidencial();
-
-        System.out.println("\n--- QUARTO STANDARD ---");
-        criadorStandard.apresentarQuarto();
-
-        System.out.println("\n--- QUARTO LUXO ---");
-        criadorLuxo.apresentarQuarto();
-
-        System.out.println("\n--- SUÍTE PRESIDENCIAL ---");
-        criadorPresidencial.apresentarQuarto();
-
-        // ===== STRATEGY =====
-
-        System.out.println("\n===== SIMULAÇÃO DE RESERVA =====");
-
-        // O Factory Method cria o quarto utilizado na reserva.
-        Quarto quartoReservado = criadorLuxo.criarQuarto();
-
-        int quantidadeDiarias = 3;
-
-        double valorOriginal =
-                quartoReservado.getValorDiaria() * quantidadeDiarias;
-
-        System.out.println("Quarto: " + quartoReservado.getCategoria());
-        System.out.println("Quantidade de diárias: " + quantidadeDiarias);
-        System.out.printf("Valor original: R$ %.2f%n", valorOriginal);
-
-        // Inicialmente, a reserva utiliza a estratégia normal.
-        CalculadoraReserva calculadora =
-                new CalculadoraReserva(new DescontoNormal());
-
-        double totalNormal = calculadora.calcularTotal(
-                quartoReservado.getValorDiaria(), quantidadeDiarias
+        // 1. Cadastra um hóspede fictício para demonstração.
+        Hospede hospede = new Hospede(
+                "João Silva",
+                "12345678900",
+                "(48) 99999-9999"
         );
 
-        // Altera a estratégia para desconto VIP.
-        calculadora.setEstrategiaDesconto(new DescontoVIP());
-
-        double totalVIP = calculadora.calcularTotal(
-                quartoReservado.getValorDiaria(), quantidadeDiarias
+        // 2. Define o quarto escolhido.
+        Quarto quarto = new Quarto(
+                101,
+                "Luxo",
+                300.00
         );
 
-        // Altera novamente a estratégia para Fidelidade.
-        calculadora.setEstrategiaDesconto(new DescontoFidelidade());
+        // 3. Utiliza o Builder para construir a reserva.
+        Reserva reserva = new Reserva.Builder()
+                .comHospede(hospede)
+                .comQuarto(quarto)
+                .comDataEntrada(LocalDate.of(2026, 12, 10))
+                .comDataSaida(LocalDate.of(2026, 12, 13))
+                .comQuantidadePessoas(2)
+                .build();
 
-        double totalFidelidade = calculadora.calcularTotal(
-                quartoReservado.getValorDiaria(), quantidadeDiarias
-        );
+        // 4. Apresenta as informações da reserva.
+        System.out.println("\n===== RESERVA CRIADA =====");
 
-        System.out.println("\n--- VALORES COM DESCONTO ---");
+        System.out.println("Hóspede: " + reserva.getHospede().getNome());
+        System.out.println("Quarto: " + reserva.getQuarto().getNumero());
+        System.out.println("Categoria: " + reserva.getQuarto().getCategoria());
+        System.out.println("Entrada: " + reserva.getDataEntrada());
+        System.out.println("Saída: " + reserva.getDataSaida());
+        System.out.println("Pessoas: " + reserva.getQuantidadePessoas());
+        System.out.println("Diárias: " + reserva.getQuantidadeDiarias());
 
-        System.out.printf("Normal (0%%): R$ %.2f%n", totalNormal);
-        System.out.printf("VIP (10%%): R$ %.2f%n", totalVIP);
-        System.out.printf("Fidelidade (15%%): R$ %.2f%n", totalFidelidade);
+        double valorTotal = reserva.getQuantidadeDiarias()
+                * reserva.getQuarto().getValorDiaria();
 
-        System.out.println("\nSimulação concluída com sucesso!");
+        System.out.printf("Valor da hospedagem: R$ %.2f%n", valorTotal);
+
+        System.out.println("\nReserva construída com sucesso!");
     }
 }
