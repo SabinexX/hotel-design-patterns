@@ -54,6 +54,16 @@ public class Reserva {
         return ChronoUnit.DAYS.between(dataEntrada, dataSaida);
     }
 
+    @Override
+    public String toString() {
+        return "Reserva{hospede=" + hospede.getNome()
+                + ", quarto=" + quarto.getNumero()
+                + ", entrada=" + dataEntrada
+                + ", saida=" + dataSaida
+                + ", pessoas=" + quantidadePessoas
+                + ", diarias=" + getQuantidadeDiarias() + "}";
+    }
+
     /**
      * Builder responsável pela construção de reservas.
      */

@@ -52,4 +52,9 @@ public class Quarto {
     public double getValorDiaria() {
         return valorDiaria;
     }
+
+    @Override
+    public String toString() {
+        return "Quarto{numero=" + numero + ", categoria='" + categoria + "', valorDiaria=" + valorDiaria + "}";
+    }
 }
