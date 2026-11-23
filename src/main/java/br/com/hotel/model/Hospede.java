@@ -48,4 +48,9 @@ public class Hospede {
     public String getTelefone() {
         return telefone;
     }
+
+    @Override
+    public String toString() {
+        return "Hospede{nome='" + nome + "', cpf='" + cpf + "', telefone='" + telefone + "'}";
+    }
 }

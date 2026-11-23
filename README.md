@@ -120,6 +120,13 @@ hotel-design-patterns/
 
 A aplicação apresenta a reserva de demonstração e calcula o valor da hospedagem com diferentes combinações de adicionais.
 
+### Alternativa via terminal (Sem IDE)
+A partir da raiz do projeto:
+
+```bash
+mvn compile
+java -cp target/classes br.com.hotel.Main
+```
 ## Exemplo de execução e verificação manual
 
 O cenário utilizado em `Main.java` cria uma reserva de **10/12/2026 a 13/12/2026** (3 diárias), no quarto **Luxo**, com diária de **R$ 300,00**.
@@ -158,7 +165,7 @@ Foi utilizado **ChatGPT, modelo GPT-6 (OpenAI)**, como apoio **na Parte 1** do p
 | Integrante | Contribuições |
 |---|---|
 | Bruno Sabino | Configuração do projeto, organização do GitHub, implementação dos padrões Builder e Decorator, integração na Main, testes e documentação, com auxílio de IA declarado neste README |
-| Filipe Belmiro | Participação ainda pendente |
+| Filipe Belmiro | remoção do pacote 'service' não utilizado e adição de 'toString()', nas entidades do modelo ('Hospede, 'Quarto, 'Reserva') para facilitar a depuração. Uso de IA declarado e autorizado. |
 | Rafael Marques | Participação ainda pendente |
 
 As contribuições individuais serão atualizadas conforme
