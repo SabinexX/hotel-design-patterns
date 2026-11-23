@@ -5,13 +5,20 @@ import br.com.hotel.model.Hospede;
 import br.com.hotel.model.Quarto;
 import br.com.hotel.model.Reserva;
 
+import br.com.hotel.decorator.Hospedagem;
+import br.com.hotel.decorator.HospedagemBasica;
+import br.com.hotel.decorator.CafeDaManhaDecorator;
+import br.com.hotel.decorator.EstacionamentoDecorator;
+
 import java.time.LocalDate;
 
 /**
  * Classe principal do Sistema de Gerenciamento de Hotel.
  *
- * Demonstra o padrão Builder na construção de reservas.
- * O Decorator será integrado na próxima etapa.
+ * Demonstra os dois padrões exigidos:
+ *
+ * Builder: construção de uma reserva.
+ * Decorator: inclusão de serviços adicionais.
  */
 public class Main {
 
@@ -21,21 +28,21 @@ public class Main {
         System.out.println("  SISTEMA DE GERENCIAMENTO DE HOTEL ");
         System.out.println("====================================");
 
-        // 1. Cadastra um hóspede fictício para demonstração.
+        // ===== 1. ENTIDADES PRINCIPAIS =====
+
+        // Cria um hóspede fictício.
         Hospede hospede = new Hospede(
                 "João Silva",
                 "12345678900",
                 "(48) 99999-9999"
         );
 
-        // 2. Define o quarto escolhido.
-        Quarto quarto = new Quarto(
-                101,
-                "Luxo",
-                300.00
-        );
+        // Define o quarto e o valor de sua diária.
+        Quarto quarto = new Quarto(101, "Luxo", 300.00);
 
-        // 3. Utiliza o Builder para construir a reserva.
+        // ===== 2. BUILDER =====
+
+        // Constrói a reserva e valida os campos obrigatórios.
         Reserva reserva = new Reserva.Builder()
                 .comHospede(hospede)
                 .comQuarto(quarto)
@@ -44,9 +51,7 @@ public class Main {
                 .comQuantidadePessoas(2)
                 .build();
 
-        // 4. Apresenta as informações da reserva.
-        System.out.println("\n===== RESERVA CRIADA =====");
-
+        System.out.println("\n===== RESERVA CRIADA (BUILDER) =====");
         System.out.println("Hóspede: " + reserva.getHospede().getNome());
         System.out.println("Quarto: " + reserva.getQuarto().getNumero());
         System.out.println("Categoria: " + reserva.getQuarto().getCategoria());
@@ -55,11 +60,64 @@ public class Main {
         System.out.println("Pessoas: " + reserva.getQuantidadePessoas());
         System.out.println("Diárias: " + reserva.getQuantidadeDiarias());
 
-        double valorTotal = reserva.getQuantidadeDiarias()
-                * reserva.getQuarto().getValorDiaria();
+        // ===== 3. DECORATOR =====
 
-        System.out.printf("Valor da hospedagem: R$ %.2f%n", valorTotal);
+        // Hospedagem original, sem serviços adicionais.
+        Hospedagem hospedagem = new HospedagemBasica(reserva);
 
-        System.out.println("\nReserva construída com sucesso!");
+        System.out.println("\n===== HOSPEDAGEM BÁSICA =====");
+        System.out.println(hospedagem.getDescricao());
+        System.out.printf(
+                "Total: R$ %.2f%n",
+                hospedagem.calcularCusto()
+        );
+
+        // Adiciona café da manhã à hospedagem.
+        hospedagem = new CafeDaManhaDecorator(
+                hospedagem,
+                reserva.getQuantidadeDiarias()
+        );
+
+        System.out.println("\n===== COM CAFÉ DA MANHÃ =====");
+        System.out.println(hospedagem.getDescricao());
+        System.out.printf(
+                "Total: R$ %.2f%n",
+                hospedagem.calcularCusto()
+        );
+
+        // Adiciona estacionamento, preservando o café da manhã.
+        hospedagem = new EstacionamentoDecorator(
+                hospedagem,
+                reserva.getQuantidadeDiarias()
+        );
+
+        System.out.println("\n===== COM TODOS OS ADICIONAIS =====");
+        System.out.println(hospedagem.getDescricao());
+        System.out.printf(
+                "Total: R$ %.2f%n",
+                hospedagem.calcularCusto()
+        );
+
+
+        // ===== 4. TESTE DE ESTACIONAMENTO ISOLADO =====
+
+        // Criamos uma nova hospedagem básica para garantir
+        // que o café da manhã não esteja incluído.
+        Hospedagem somenteEstacionamento =
+                new EstacionamentoDecorator(
+                        new HospedagemBasica(reserva),
+                        reserva.getQuantidadeDiarias()
+                );
+
+        System.out.println("\n===== SOMENTE ESTACIONAMENTO =====");
+        System.out.println(somenteEstacionamento.getDescricao());
+
+        System.out.printf(
+                "Total: R$ %.2f%n",
+                somenteEstacionamento.calcularCusto()
+        );
+
+
+        System.out.println("\nReserva finalizada com sucesso!");
     }
 }
